@@ -1,95 +1,44 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import {Container, Grid, Typography, Button, Pagination} from '@mui/material';
+import Link from 'next/link';
+import { IProduct} from "@/app/models/products";
+import {Paginator} from "@/components/Paginator";
 
-export default function Home() {
+// REVALIDATE EVERY 100 SECONDS
+export const revalidate = 100;
+
+export default async function Home({searchParams}: {searchParams: {page: string}}) {
+    const data = await getHomeData(searchParams?.page);
+
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <Container>
+        <Typography variant="h4" gutterBottom>
+          Product Catalog
+        </Typography>
+        <Grid container spacing={4}>
+          {data.list.map((product: IProduct) => (
+              <Grid item xs={12} sm={6} md={4} key={product.id}>
+                <Typography variant="h6">{product.name}</Typography>
+                <Typography variant="subtitle2">{product.description}</Typography>
+                <Link href={`/${product.id}`} passHref>
+                  <Button variant="contained" color="primary">View</Button>
+                </Link>
+              </Grid>
+          ))}
+        </Grid>
+          <Paginator page={data.page} totalPages={data.totalPages} size={data.size} />
+      </Container>
   );
+}
+
+async function getHomeData(page?: string): Promise<any> {
+    try {
+        const data = await fetch(`http://localhost:3000/api/products/?page=${page || 1}&size=5`);
+
+        return await data.json();
+    } catch (e) {
+        // ERROR HANDLING
+        console.error(e);
+        return [];
+    }
 }
