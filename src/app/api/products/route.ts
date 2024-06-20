@@ -3,7 +3,7 @@ import {NextRequest, NextResponse} from "next/server";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest): Promise<any> {
+export async function GET(req: NextRequest): Promise<NextResponse> {
     const page = Number(req.nextUrl.searchParams.get('page') as string);
     const size = Number(req.nextUrl.searchParams.get('size') as string);
     try {

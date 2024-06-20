@@ -8,6 +8,7 @@ export function Paginator({page, totalCount, size}: {page: number, totalCount: n
         router.push(`/?page=${page}`);
     }
     return <Pagination
+        style={{margin: "0 auto", width: 'fit-content'}}
         count={Number(Math.ceil(totalCount / size))}
         page={Number(page || 1)}
         onChange={handlePageChange}

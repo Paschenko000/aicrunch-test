@@ -13,10 +13,10 @@ export default async function Home({searchParams}: {searchParams: {page: string}
 
   return (
       <Container style={{padding: "40px"}}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom color="white">
           Product Catalog
         </Typography>
-        <Grid container spacing={4}>
+        <Grid container spacing={4} style={{marginBottom: "30px"}}>
           {data.list.map((product: IProduct) => (
               <Grid item xs={12} sm={6} md={4} key={product.id}>
                   <Card variant="outlined">
